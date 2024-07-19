@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "softub": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "CONFIG_DB": "c:\\projects\\softubConfig\\config.db"
+      }
+    }
+  }
+}

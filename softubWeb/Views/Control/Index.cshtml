@@ -1,0 +1,62 @@
+@using softubWeb.Models.Views
+@model ControlIndex
+@{
+    ViewData["Title"] = "Softub Control";
+}
+
+
+
+<form asp-action="SaveValues" asp-controller="Control" id="controlForm">
+
+    <div class="row">
+        <div class="col-3">
+            <label class="form-label" asp-for="TargetTemp"></label>
+        </div>
+        <div class="col-3">
+            <div class="input-group">
+                <input type="number" class="form-control" min="80" max="105" asp-for="TargetTemp" />
+                <input type="submit" class="btn btn-primary" value="Set Temperature">
+            </div>
+        </div>
+        <div class="col-3">
+            <label class="form-label" asp-for="LastTemp"></label>
+        </div>
+        <div class="col-3">
+            <input class="form-control" asp-for="LastTemp" disabled />
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-6">
+            <div class="form-check form-switch">
+                <input class="form-check-input changePostback" type="checkbox" role="switch" asp-for="LightsOn">
+                <label class="form-check-label" asp-for="LightsOn"></label>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="form-check form-switch">
+                <input class="form-check-input changePostback" type="checkbox" role="switch" asp-for="JetsOn">
+                <label class="form-check-label" asp-for="JetsOn"></label>
+            </div>
+        </div>
+
+    </div>
+</form>
+
+@section Scripts
+{
+    <script>
+        function onPageReady() {
+            console.log("Hello World");
+            $(".changePostback").on("change", () => {
+                $("#controlForm").submit();
+            });
+        }
+    </script>
+}
+
+@section Header
+{
+    <meta http-equiv="refresh" content="30">
+}

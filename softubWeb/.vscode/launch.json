@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "C#: softubWeb [Default Configuration]",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}\\softubWeb.csproj",
+            "env": {
+                "CONFIG_DB": "c:\\projects\\softubConfig\\config.db"
+            }
+        }
+    ]
+}
