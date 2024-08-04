@@ -142,7 +142,7 @@ public class ControlProcess
     void TurnLightsOn(bool value = true)
     {
         Console.WriteLine($"TurnLightsOn: {value}");
-        if (value)
+        if (!value)
         {
             if (controller.IsPinOpen(LED_PIN) && controller.Read(LED_PIN) != PinValue.High)
                 controller.Write(LED_PIN, PinValue.High);
