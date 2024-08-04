@@ -39,6 +39,7 @@ internal class Program
                 services.AddHostedService<JetController>();
                 services.AddHostedService<ThermometerController>();
                 services.AddHostedService<HeaterController>();
+                services.AddHostedService<PanelController>();
             });
     }
 }
