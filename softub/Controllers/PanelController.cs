@@ -62,18 +62,12 @@ namespace softub.Controllers
                         //case 30:
                         case JETS:
                             Console.WriteLine("Jets"); // jets
-                                                       //displayBuffer[(int)bufferPosition.LEDS] = (byte)(displayBuffer[(int)bufferPosition.LEDS] | 0x10);
-                            //heatOn = !heatOn;
                             configValues.JetsOn = 1;
-                            //SetHeatLight();
                             break;
                         //case 45:
                         case LIGHT:
                             Console.WriteLine("Light"); // light
-                                                        //displayBuffer[(int)bufferPosition.LEDS] = (byte)(displayBuffer[(int)bufferPosition.LEDS] | 0x20);
-                            //filterOn = !filterOn;
                             configValues.LightsOn = 1;
-                            //SetFilterLight();
                             break;
                         default:
                             break;

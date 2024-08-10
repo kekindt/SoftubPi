@@ -15,11 +15,13 @@ namespace softub.Controllers
         ILogger<HeaterController> _logger;
         IJetController _jetController;
         IConfigRepository _configRepository;
+        IPanelController _panelController;
 
-        public HeaterController(ILogger<HeaterController> logger, IJetController jetController, IConfigRepository configRepository) 
+        public HeaterController(ILogger<HeaterController> logger, IJetController jetController, IConfigRepository configRepository, IPanelController panelController) 
         { 
             _configRepository = configRepository;
             _jetController = jetController;
+            _panelController = panelController;
             _logger = logger;
             _logger.LogInformation("Heater Controller Started");
         }
@@ -42,6 +44,7 @@ namespace softub.Controllers
                     if (!_jetController.IsOn())
                     {
                         _jetController.StartJets();
+                        _panelController.TurnOnHeatLight();
                         _logger.LogInformation("Temp not at target, starting jets");
                     }
                 }
@@ -50,6 +53,7 @@ namespace softub.Controllers
                     if (_jetController.IsOn())
                     {
                         _jetController.StopJets();
+                        _panelController.TurnOffFilterLight();
                         _logger.LogInformation("Temp at target, stoping jets");
                     }
                 }

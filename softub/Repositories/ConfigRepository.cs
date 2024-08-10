@@ -10,41 +10,49 @@ namespace softub.Repositories
 {
     internal class ConfigRepository : IConfigRepository
     {
+        public string LockObject = "locked";
+
         public ConfigValue GetConfigValue()
         {
-            using (var db = new ConfigContext())
+            lock (LockObject)
             {
-                var config = db.ConfigValues.ToList();
-                if (config == null || config.Count == 0)
+                using (var db = new ConfigContext())
                 {
-                    // Add default row
-                    ConfigValue cv = new ConfigValue()
+                    var config = db.ConfigValues.ToList();
+                    if (config == null || config.Count == 0)
                     {
-                        TargetTemp = 100,
-                        FailSafeCold = 40,
-                        FailSafeHot = 110,
-                        JetsOn = 0,
-                        LightsOn = 0,
-                        LastTemp = 0
-                    };
-                    db.ConfigValues.Add(cv);
-                    db.SaveChanges();
-                    return cv;
+                        // Add default row
+                        ConfigValue cv = new ConfigValue()
+                        {
+                            TargetTemp = 100,
+                            FailSafeCold = 40,
+                            FailSafeHot = 110,
+                            JetsOn = 0,
+                            LightsOn = 0,
+                            LastTemp = 0
+                        };
+                        db.ConfigValues.Add(cv);
+                        db.SaveChanges();
+                        return cv;
+                    }
+                    return config.FirstOrDefault();
                 }
-                return config.FirstOrDefault();
             }
         }
 
         public void SaveValues(ConfigValue updated)
         {
-            using (var db = new ConfigContext())
+            lock (LockObject)
             {
-                var dbValues = db.ConfigValues.ToList();
-                var dbValue = dbValues.FirstOrDefault();
+                using (var db = new ConfigContext())
+                {
+                    var dbValues = db.ConfigValues.ToList();
+                    var dbValue = dbValues.FirstOrDefault();
 
-                dbValue.LastTemp = updated.LastTemp; // Convert.ToInt32(currentTemp);
-                db.ConfigValues.Update(dbValue);
-                db.SaveChanges();
+                    dbValue.LastTemp = updated.LastTemp; // Convert.ToInt32(currentTemp);
+                    db.ConfigValues.Update(dbValue);
+                    db.SaveChanges();
+                }
             }
         }
     }
