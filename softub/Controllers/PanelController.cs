@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using softub.Interfaces;
 using softub.Utilities;
 using System;
@@ -18,20 +19,32 @@ namespace softub.Controllers
         const int LIGHT = 45;
 
         IConfigRepository _configRepository;
+        ILogger<PanelController> _logger;
 
         static SerialPort port = null;
         int temp = 100;
         static bool heatOn = false;
         static bool filterOn = false;
+        static bool portOpen = false;
         byte[] displayBuffer = [0x02, 0x00, 0x01, 0x00, 0x00, 0x01, 0xFF];
 
-        public PanelController(IConfigRepository configRepository)
+        public PanelController(ILogger<PanelController> logger, IConfigRepository configRepository)
         {
-            _configRepository = configRepository;
-            if (port == null)
+            _logger = logger;
+            try
             {
-                port = new SerialPort("/dev/serial0", 2400);
-                port.Open();
+                _configRepository = configRepository;
+                if (port == null)
+                {
+                    port = new SerialPort("/dev/serial0", 2400);
+                    port.Open();
+                    portOpen = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Panel Controller failed to open port");
+                portOpen = false;
             }
         }
 
@@ -40,43 +53,44 @@ namespace softub.Controllers
 
             while (!stoppingToken.IsCancellationRequested)
             {
+                if(portOpen) {
                 var configValues = _configRepository.GetConfigValue();
 
-                if (port.IsOpen)
-                {
-                    var readByte = port.ReadByte();
-                    switch (readByte)
+                    if (port.IsOpen)
                     {
-                        //case 75:
-                        case TEMP_UP:
-                            Console.WriteLine("Temp Up"); // up
-                            temp++;
-                            configValues.TargetTemp = temp;
-                            break;
-                        case TEMP_DOWN:
-                        //case 135:
-                            Console.WriteLine("Temp Down"); // down
-                            temp--;
-                            configValues.TargetTemp = temp;
-                            break;
-                        //case 30:
-                        case JETS:
-                            Console.WriteLine("Jets"); // jets
-                            configValues.JetsOn = 1;
-                            break;
-                        //case 45:
-                        case LIGHT:
-                            Console.WriteLine("Light"); // light
-                            configValues.LightsOn = 1;
-                            break;
-                        default:
-                            break;
+                        var readByte = port.ReadByte();
+                        switch (readByte)
+                        {
+                            //case 75:
+                            case TEMP_UP:
+                                Console.WriteLine("Temp Up"); // up
+                                temp++;
+                                configValues.TargetTemp = temp;
+                                break;
+                            case TEMP_DOWN:
+                                //case 135:
+                                Console.WriteLine("Temp Down"); // down
+                                temp--;
+                                configValues.TargetTemp = temp;
+                                break;
+                            //case 30:
+                            case JETS:
+                                Console.WriteLine("Jets"); // jets
+                                configValues.JetsOn = 1;
+                                break;
+                            //case 45:
+                            case LIGHT:
+                                Console.WriteLine("Light"); // light
+                                configValues.LightsOn = 1;
+                                break;
+                            default:
+                                break;
+                        }
+
+                        SetTempForScreen(temp, ref displayBuffer);
+                        SetLEDs();
+                        WriteToPanel(ref displayBuffer);
                     }
-
-                    SetTempForScreen(temp, ref displayBuffer);
-                    SetLEDs();
-                    WriteToPanel(ref displayBuffer);
-
                 }
 
                 await Task.Delay(500, stoppingToken);

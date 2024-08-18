@@ -32,10 +32,17 @@ namespace softub.Controllers
             _pinController.TurnPinOn(_pinNumber, true);
         }
 
-        public void StopJets()
+        public void StopJets(bool overRide = false)
         {
-            runJets = false;
-            _pinController.TurnPinOff(_pinNumber, true);
+            if (!runJets)
+            {
+                runJets = false;
+                _pinController.TurnPinOff(_pinNumber, true);
+            }
+            if (overRide)
+            {
+                _pinController.TurnPinOff(_pinNumber, true);
+            }
         }
 
         public bool IsOn()
@@ -63,12 +70,12 @@ namespace softub.Controllers
                     {
                         _logger.LogInformation("Jets turned on for 20 minutes");
                         RunJets(20 * 60);
+                        configValue.JetsOn = 0;
+                        _configRepository.SaveValues(configValue);
                     }
                 }
-
                 await Task.Delay(2000, stoppingToken);
             }
-            
         }
     }
 }

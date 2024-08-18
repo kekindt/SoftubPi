@@ -35,11 +35,13 @@ internal class Program
                 services.AddSingleton<IPinController, PinController>();
                 services.AddScoped<IConfigRepository, ConfigRepository>();
                 services.AddScoped<IJetController, JetController>();
+                services.AddSingleton<IPanelController, PanelController>();
+                services.AddHostedService<PanelController>();
                 services.AddHostedService<LightController>();
                 services.AddHostedService<JetController>();
                 services.AddHostedService<ThermometerController>();
                 services.AddHostedService<HeaterController>();
-                services.AddHostedService<PanelController>();
+                
             });
     }
 }

@@ -35,7 +35,7 @@ namespace softub.Controllers
                 if (configValue.LastTemp >= configValue.FailSafeHot)
                 {
                     // Stop reguardless of Jets Status
-                    _jetController.StopJets();
+                    _jetController.StopJets(true);
                     _logger.LogWarning($"Stopped Jets due to fail safe temp {configValue.FailSafeHot}");
                 }
 

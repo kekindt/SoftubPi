@@ -11,6 +11,6 @@ namespace softub.Interfaces
         bool IsOn();
         void RunJets(int seconds);
         void StartJets();
-        void StopJets();
+        void StopJets(bool overRide);
     }
 }
